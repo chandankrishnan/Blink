@@ -96,22 +96,18 @@
         }
 
         // UI EVENTS
-
         red.addEventListener('change', function(e) {
             brightness.r = this.value;
             publishUpdate(brightness);
         }, false);
-
         green.addEventListener('change', function(e) {
             brightness.g = this.value;
             publishUpdate(brightness);
         }, false);
-
         blue.addEventListener('change', function(e) {
             brightness.b = this.value;
             publishUpdate(brightness);
         }, false);
-
     })();
     </script>
 </body>
