@@ -1,0 +1,120 @@
+<!doctype html>
+
+<head>
+    <title>Arduino Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <section class="header">
+    <table>
+        <tbody>
+            <tr>
+                <td><img src="images/lego.png"></img></td>
+                <td id="nameF"><strong>Arduino Demo</strong></td>
+            </tr>
+        </tbody>
+    </table>
+    </section>
+        
+    <!-- </header> -->
+    <br/>
+  
+    <section class="preference">
+        <div>
+            <div class="caption red">Red</div>
+            <label for="red" class="brightness fa">
+                <input id="red" type="range" min="0" max="255" step="1" value="0">
+            </label>
+        </div>
+        <div>
+            <div class="caption green">Green</div>
+            <label for="green" class="brightness fa">
+                <input id="green" type="range" min="0" max="255" step="1" value="0">
+            </label>
+        </div>
+        <div>
+            <div class="caption blue">Blue</div>
+            <label for="blue" class="brightness fa">
+                <input id="blue" type="range" min="0" max="255" step="1" value="0">
+            </label>
+        </div>
+    </section>
+    <script src="https://cdn.pubnub.com/pubnub-3.15.2.min.js"></script>
+    <script>
+    (function() {
+        'use strict';
+        var pubnub = PUBNUB.init({
+                publish_key: 'pub-c-882bfb3a-d8ba-4332-a76d-dc43f88e15e2',
+                subscribe_key: 'sub-c-315f24ac-6533-11e6-9d13-0619f8945a4f'
+            }),
+            channel = 'node best',
+            red = document.getElementById('red'),
+            green = document.getElementById('green'),
+            blue = document.getElementById('blue'),
+            brightness = {
+                r: 0,
+                g: 0,
+                b: 0
+            };
+
+
+        // UI Reset: Subscribe data from all subscibers of the channel to set the state correctly
+
+        pubnub.subscribe({
+            channel: channel,
+            message: resetSliders,
+            connect: initSliders
+        });
+
+        function resetSliders(m) {
+            red.value = brightness.r = m.r;
+            green.value = brightness.g = m.g;
+            blue.value = brightness.b = m.b;
+        }
+
+        function initSliders() {
+            pubnub.history({
+                channel: channel,
+                count: 1,
+                callback: function(messages) {
+                    messages[0].forEach(function(m) {
+                        console.log("slide data: " + JSON.stringify(m));
+                        resetSliders(m);
+                    });
+                }
+            });
+        }
+
+        function publishUpdate(data) {
+            console.log("data :" + JSON.stringify(data));
+
+            pubnub.publish({
+                channel: channel,
+                message: data
+            });
+        }
+
+        // UI EVENTS
+
+        red.addEventListener('change', function(e) {
+            brightness.r = this.value;
+            publishUpdate(brightness);
+        }, false);
+
+        green.addEventListener('change', function(e) {
+            brightness.g = this.value;
+            publishUpdate(brightness);
+        }, false);
+
+        blue.addEventListener('change', function(e) {
+            brightness.b = this.value;
+            publishUpdate(brightness);
+        }, false);
+
+    })();
+    </script>
+</body>
+
+</html>
