@@ -1,6 +1,14 @@
 'use strict';
-let five = require('johnny-five');
+let express = require('express'),
+    app = express(),
+    bodyParser = require('body-parser'),
+    five = require('johnny-five'),
+    port = process.env.PORT || 3000;
 
+app.use(express.static('../client'));
+app.get('/get', function(req, res) {
+    res.send('hello');
+});
 five.Board().on('ready', function() {
     console.log('ready');
 
@@ -47,5 +55,7 @@ five.Board().on('ready', function() {
             }
         });
     }
-
 });
+app.listen(port, function() {
+    console.log('server running on port ' + port);
+})

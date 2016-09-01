@@ -9,6 +9,8 @@
   "author": "chandan",
   "license": "",
   "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
     "johnny-five": "^0.9.62",
     "pubnub": "^3.16.0"
   }
